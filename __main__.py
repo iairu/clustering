@@ -1,6 +1,7 @@
 from _generator import Generator
 from _visualizator import Visualizator
 from _clusterator import Clusterator
+from matplotlib import pyplot
 
 def main():
     # OPTIONS
@@ -39,6 +40,15 @@ def main():
     # Run and time clustering algorithms for every point count
 
     # Visualize clusters of points per algorithm incl. times
+    pyplot.style.use("_mpl-gallery")
+    fig, ax = pyplot.subplots()
+
+    ax.scatter(*zip(*_all), vmin=-field, vmax=field)
+
+    ax.set(xlim=(-field, field),
+           ylim=(-field, field))
+
+    pyplot.show()
 
     return
 
