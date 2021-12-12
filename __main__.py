@@ -58,10 +58,15 @@ def main():
     if (exists(cachename)):
         pool = Generator.loadPoints(cachename)
     else:
+        # Pool will have (max(sizes) + startsize) points
         pool = Generator.generatePoints(field, startsize, max(sizes), maxoffset)
         Generator.savePoints(pool, cachename)
 
-    # Select points to be used depending on sizes
+    # Non-randomly select points to be used depending on sizes
+    # Points will exactly match the given size
+    selected = []
+    for size in sizes:
+        selected.append(Generator.modSelectPoints(pool, size))
 
     # Run and time clustering algorithms for every point count
 
@@ -69,12 +74,13 @@ def main():
     # Globally initiate the visualizator with common values for field size, line count and plot colors
     vis = Visualizator(field, lineevery, colors)
 
-    # Specify the exportname for the given instance with an up-to-date timestamp and a correct size
-    currname = exportname.replace("(s)", "sizetodo")
-    timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-    currname = currname.replace("(t)", timestamp)
-    # Then plot all of the clusters for the given instance (algorithm), include a title and export
-    vis.plot([pool], "Hello world!", currname)
+    for i, points in enumerate(selected): # todo change selected to clusters after clustering
+        # Specify the exportname for the given instance with an up-to-date timestamp and a correct size
+        currname = exportname.replace("(s)", str(sizes[i]))
+        timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+        currname = currname.replace("(t)", timestamp)
+        # Then plot all of the clusters for the given instance (algorithm), include a title and export
+        vis.plot([points], "Hello world!", currname)
 
 
     return

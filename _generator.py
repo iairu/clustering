@@ -14,6 +14,27 @@ class Generator:
             points = pickle.load(f)
         return points
 
+    # Select a precise amount of points from a point pool
+    # This function will always select the same nth point (non-random)
+    def modSelectPoints(pool: list, size: int) -> list:
+        points = []
+
+        n = len(pool) // size # integer division => floor => there will be some outliers
+        i = 0
+        j = 0
+        for point in pool:
+            # Only add every nth point to match the size
+            if (i % n == 0):
+                points.append(point)
+                j += 1
+                # Don't add outliers above size limit
+                # (there will be at least startsize of them, considering the way generatePoints works)
+                if (j >= size):
+                    break
+            i += 1
+
+        return points
+
     def generatePoints(fieldsize: int, startsize: int, size: int, maxoffset: int) -> list:
         # Points that will be generated and returned
         # Total amount will be startsize + size
