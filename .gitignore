@@ -6,3 +6,5 @@ Lib
 Scripts
 pyvenv.cfg
 share
+export/*.png
+export/*.csv
