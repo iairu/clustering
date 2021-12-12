@@ -1,7 +1,8 @@
 from _generator import Generator
 from _visualizator import Visualizator
 from _clusterator import Clusterator
-from matplotlib import pyplot
+
+from datetime import datetime
 
 def main():
     # OPTIONS
@@ -30,25 +31,37 @@ def main():
     success = 500
 
     # - VISUALIZATION
+    # every ... points on <-field;field> x and y axes draw a line
+    lineevery = 1000 
+    # (t) will be replaced with a timestamp and (s) with a size 
+    # if empty then display on screen instead
+    exportname = "export/(t)_graph_(s).png"
+    # colors for individual clusters, if k > len(colors) then they will loop
+    # valid options: https://matplotlib.org/stable/tutorials/colors/colors.html
+    colors = ["r", "g", "b", "m"] 
 
     # --------------------------------------------------------------------------------------------
 
     # Generate and select points to be used
     _all = Generator.generatePoints(field, startsize, max(sizes), maxoffset)
-    print(_all)
+    _all2 = Generator.generatePoints(field, startsize, max(sizes), maxoffset) # tmp demo
+    _all3 = Generator.generatePoints(field, startsize, max(sizes), maxoffset) # tmp demo
+    _all4 = Generator.generatePoints(field, startsize, max(sizes), maxoffset) # tmp demo
+    _all5 = Generator.generatePoints(field, startsize, max(sizes), maxoffset) # tmp demo
 
     # Run and time clustering algorithms for every point count
 
     # Visualize clusters of points per algorithm incl. times
-    pyplot.style.use("_mpl-gallery")
-    fig, ax = pyplot.subplots()
+    # Globally initiate the visualizator with common values for field size, line count and plot colors
+    vis = Visualizator(field, lineevery, colors)
 
-    ax.scatter(*zip(*_all), vmin=-field, vmax=field)
+    # Specify the exportname for the given instance with an up-to-date timestamp and a correct size
+    currname = exportname.replace("(s)", "sizetodo")
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+    currname = currname.replace("(t)", timestamp)
+    # Then plot all of the clusters for the given instance (algorithm), include a title and export
+    vis.plot([_all, _all2, _all3, _all4, _all5], "Hello world!", currname)
 
-    ax.set(xlim=(-field, field),
-           ylim=(-field, field))
-
-    pyplot.show()
 
     return
 
