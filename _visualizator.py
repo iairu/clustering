@@ -53,8 +53,9 @@ class Visualizator:
 
         # Add point data for a single cluster into the graph
         # Behind the scenes example: clusters = Generator.generatePoints(field, startsize, max(sizes), maxoffset)
+        # Set the point size (by area) to minimal allowed (1)
         for cluster in clusters:
-            ax.scatter(*zip(*cluster)) # zip sets the x,y args of .scatter separately from a (x,y) pair list
+            ax.scatter(*zip(*cluster), s=1) # zip sets the x,y args of .scatter separately from a (x,y) pair list
 
         # Output depending on whether to display on screen or export
         if (export):
