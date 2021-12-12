@@ -3,11 +3,17 @@ from _visualizator import Visualizator
 from _clusterator import Clusterator
 
 from datetime import datetime
+from os.path import exists
 
 def main():
     # OPTIONS
     
+
+
     # - GENERATOR
+    # generate fresh points and save them into the cachename file or reuse existing pointcache
+    # file for a cached point pool (it will be created if it doesn't exist, reused as long as it exists)
+    cachename = "cachedpoints/cache.bin"
     # value for both x,y from center in both positive and negative directions (inclusive)
     field = 5000 
     # number of points with unique coordinates to generate at the beginning randomly
@@ -23,12 +29,16 @@ def main():
     # points away from the borders of the field
     maxoffset = 100
 
+
+
     # - CLUSTERING
     # k-means count of control points, also its count of clusters
     k = 3
     # value for both x,y for maximal allowed average distance from the center for clustering
     # if the average is this value or lower it means clustering success, else failure (inclusive)
     success = 500
+
+
 
     # - VISUALIZATION
     # every ... points on <-field;field> x and y axes draw a line
@@ -40,14 +50,18 @@ def main():
     # valid options: https://matplotlib.org/stable/tutorials/colors/colors.html
     colors = ["r", "g", "b", "m"] 
 
+
+
     # --------------------------------------------------------------------------------------------
 
-    # Generate and select points to be used
-    _all = Generator.generatePoints(field, startsize, max(sizes), maxoffset)
-    _all2 = Generator.generatePoints(field, startsize, max(sizes), maxoffset) # tmp demo
-    _all3 = Generator.generatePoints(field, startsize, max(sizes), maxoffset) # tmp demo
-    _all4 = Generator.generatePoints(field, startsize, max(sizes), maxoffset) # tmp demo
-    _all5 = Generator.generatePoints(field, startsize, max(sizes), maxoffset) # tmp demo
+    # Generate or load all points (point pool) for all algorithms and sizes
+    if (exists(cachename)):
+        pool = Generator.loadPoints(cachename)
+    else:
+        pool = Generator.generatePoints(field, startsize, max(sizes), maxoffset)
+        Generator.savePoints(pool, cachename)
+
+    # Select points to be used depending on sizes
 
     # Run and time clustering algorithms for every point count
 
@@ -60,7 +74,7 @@ def main():
     timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
     currname = currname.replace("(t)", timestamp)
     # Then plot all of the clusters for the given instance (algorithm), include a title and export
-    vis.plot([_all, _all2, _all3, _all4, _all5], "Hello world!", currname)
+    vis.plot([pool], "Hello world!", currname)
 
 
     return

@@ -1,6 +1,19 @@
 import random
+import pickle
 
 class Generator:
+    # Use pickle to dump a list of points
+    def savePoints(points: list, filename: str):
+        with open(filename, "wb") as f:
+            pickle.dump(points, f)
+    
+    # Use pickle to load a list of points
+    def loadPoints(filename: str):
+        points = []
+        with open(filename, "rb") as f:
+            points = pickle.load(f)
+        return points
+
     def generatePoints(fieldsize, startsize, size, maxoffset):
         # Points that will be generated and returned
         points = []
@@ -18,5 +31,7 @@ class Generator:
             if (starter not in points):
                 points.append(starter)
                 i += 1
+
+        # todo generate the rest of points
 
         return points

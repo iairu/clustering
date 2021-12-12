@@ -8,3 +8,4 @@ pyvenv.cfg
 share
 export/*.png
 export/*.csv
+cachedpoints/*.bin
