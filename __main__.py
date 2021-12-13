@@ -40,6 +40,8 @@ def main():
     # value for both x,y for maximal allowed average distance from the center for clustering
     # if the average is this value or lower it means clustering success, else failure (inclusive)
     success = 500 # todo implement
+    # k-means convergence user limit
+    max_convergence_iterations = 10000
 
 
 
@@ -95,12 +97,12 @@ def main():
 
     # Clusters graph data
     titles = []
-    clusters = []
+    all_clusters = []
 
     # Times graph data
     alg_range = range(1) # number of active algorithms
     times = [[[] for alg in alg_range] for size in sizes]
-    times_titles = ["K-Means Centroid wip"]
+    times_titles = ["K-Means Centroid"]
 
     for rerun in range(timing_reruns):
         # For each size (in other words selected size's points)
@@ -111,7 +113,7 @@ def main():
 
             # Run a benchmark for an algorithm
             time = perf_counter()
-            localclusters = Clusterator.kmeans_centroid(points, k)
+            success, iterations, clusters, control = Clusterator.kmeans_centroid(points, k, max_convergence_iterations)
             time = perf_counter() - time
 
             # Save for timing (all runs considered)
@@ -124,11 +126,11 @@ def main():
                 # Create a graph title
                 # Considering modSelectPoints, the sizes should be equivalent 
                 # to user defined sizes, for demonstration use a recounted size
-                recount = sum(len(cluster) for cluster in localclusters)
-                title = "K-Means Centroid wip (k = " + str(k) + ", " + str(recount) + " points)"
+                recount = sum(len(cluster) for cluster in clusters)
+                title = "K-Means Centroid (k " + str(k) + ", " + str(recount) + " pts, suc " + str(success) + ", i " + str(iterations) + ")"
                 
                 # Save for graph (only final run considered)
-                clusters.append(localclusters)
+                all_clusters.append(clusters)
                 titles.append(title)
 
 
@@ -139,13 +141,13 @@ def main():
     vis = Visualizator(field, lineevery, timing_maxy, colors)
 
     # Clusters graph
-    for i, localclusters in enumerate(clusters):
+    for i, clusters in enumerate(all_clusters):
         # Specify the exportname for the given instance with an up-to-date timestamp and a correct size
         _exportname = exportname.replace("(s)", str(sizes[i]))
         timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
         _exportname = _exportname.replace("(t)", timestamp)
         # Then plot all of the clusters for the given instance (algorithm), include a title and export
-        vis.plot(localclusters, titles[i], _exportname)
+        vis.plot(clusters, titles[i], _exportname)
 
     # Times graph
     for i, times_per_size in enumerate(times):
